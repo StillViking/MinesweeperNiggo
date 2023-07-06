@@ -25,7 +25,7 @@ namespace MinesweeperNiggo
 
         private int zeilen = 10;
         private int spalten = 10;
-        private Minefield field;
+        private Minefield Minenfeld;
         
         //Im Konstrktor wird die Anzahl der Spalten und Zeilen gesetzt
         public MainWindow()
@@ -47,9 +47,9 @@ namespace MinesweeperNiggo
                 myGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
 
-            field = new Minefield(zeilen, spalten);
+            Minenfeld = new Minefield(zeilen, spalten);
 
-            myGrid.ShowGridLines = true;
+            //myGrid.ShowGridLines = true;
 
 
 
@@ -65,7 +65,10 @@ namespace MinesweeperNiggo
                 {
                     Button btn = new Button();
                     btn.Background = Brushes.DarkGray;
+                    btn.BorderBrush = Brushes.Black;
+                    btn.BorderThickness = new Thickness(1);
                     btn.Click += OnFieldClick;
+                    btn.MouseRightButtonUp += SetFlag;
                     //btn dem Grid zufügen
                     myGrid.Children.Add(btn);
                     Grid.SetRow(btn, i);
@@ -74,6 +77,34 @@ namespace MinesweeperNiggo
             }
         }
 
+
+
+        //Handler des Klick-Eventes mit rechter Maustaste, setzt die Flagge
+        private void SetFlag(object sender, MouseButtonEventArgs e)
+        {
+            Button btn = sender as Button;
+            int i = Grid.GetRow(btn);
+            int j = Grid.GetColumn(btn);
+
+            Minenfeld.setFlag(i - 1, j);
+
+            Image img = new Image();
+            img.Source = new BitmapImage(new Uri("E:\\Projekte\\Niko Programmier Projekte\\Eigene Projekte\\MinesweeperNiggo\\MinesweeperNiggo\\flag.png"));
+
+            if (Minenfeld.field[i-1, j].flagged)
+            {
+                btn.Content = img;
+            }
+            else
+            {
+                btn.Content = "";
+            }
+
+        }
+
+
+
+        //Handler des einfachen Klick-Events mit linker Maustaste
         private void OnFieldClick(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
@@ -82,10 +113,10 @@ namespace MinesweeperNiggo
             int i = Grid.GetRow(btn); 
             int j = Grid.GetColumn(btn);
 
-            field.ClickTile(i-1, j);
+            Minenfeld.ClickTile(i-1, j);
 
             this.refresh();
-            if (field.hitMine) //Feld markieren, auf dem man die Mine getroffen hat
+            if (Minenfeld.hitMine) //Feld markieren, auf dem man die Mine getroffen hat
             {
                 var hitMineField = myGrid.Children.Cast<UIElement>().First(x => Grid.GetRow(x) == i && Grid.GetColumn(x) == j) as Label;
                 hitMineField.Background = Brushes.Red;
@@ -97,7 +128,7 @@ namespace MinesweeperNiggo
         //der Content entsprechend (Mine = * oder die Zahl "numberOfAdjacentMines) gesetzt
         private void refresh()
         {
-            if (field.hitMine || field.win) //sobald gewonnen(win) oder verloren(hinMine) werden alle Buttons deaktiviert
+            if (Minenfeld.hitMine || Minenfeld.win) //sobald gewonnen(win) oder verloren(hinMine) werden alle Buttons deaktiviert
             {
                 foreach(var item in myGrid.Children)
                 {
@@ -113,7 +144,7 @@ namespace MinesweeperNiggo
 
             //Setze für jeden Button, dessen zugehöriges Element in field "clicked" ist seinen Content entsprechend.
             //Entferne für jeden Button
-            for (int i = 1; i < zeilen; i++)
+            for (int i = 1; i <= zeilen; i++)
             {
                 for (int j = 0; j < spalten; j++)
                 {
@@ -128,12 +159,14 @@ namespace MinesweeperNiggo
 
         private void changeButtonToLabel(int i, int j)
         {
-            if (field.field[i - 1, j].clicked)
+            if (Minenfeld.field[i - 1, j].clicked)
             {
                 Button btn = myGrid.Children.Cast<UIElement>().First(x => Grid.GetRow(x) == i && Grid.GetColumn(x) == j) as Button;
                 Label l = new Label();
+                l.BorderBrush = Brushes.Black;
+                l.BorderThickness = new Thickness(1);
 
-                if (field.field[i - 1, j].mine)
+                if (Minenfeld.field[i - 1, j].mine)
                 {
                     l.Content = "*";
                     l.FontSize = 30;
@@ -143,13 +176,13 @@ namespace MinesweeperNiggo
                 }
                 else
                 {
-                    if (field.field[i - 1, j].numberOfAdjacentMines == 0)
+                    if (Minenfeld.field[i - 1, j].numberOfAdjacentMines == 0)
                     {
                         l.Content = "";
                     }
                     else
                     {
-                        l.Content = field.field[i - 1, j].numberOfAdjacentMines;
+                        l.Content = Minenfeld.field[i - 1, j].numberOfAdjacentMines;
                         l.FontSize = 20;
                         l.HorizontalContentAlignment = HorizontalAlignment.Center;
                     }

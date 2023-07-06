@@ -34,9 +34,11 @@ namespace MinesweeperNiggo
     {
         //Feldbeschreibung (Länge, Breite)
         public Tile[,] field;
+        
+        //Wird gesetzt wenn das Spiel gewonnen ist (alle Felder bis auf die Minen "clicked"
         public bool win = false;
 
-        //wird das auf true gesetzt ist man auf eine Mine getreten und das Spiel endet, per default mit Wert false
+        //wird das auf true gesetzt ist man auf eine Mine getreten und das Spiel endet, per default mit Wert false. wird gesetzt wenn eine Mine geklickt wurde
         public bool hitMine = false;
 
         //Konstruktor
@@ -150,7 +152,7 @@ namespace MinesweeperNiggo
                 return;
             }
 
-            if (field[i, j].clicked) //nichts tun wenn das Feld bereits bearbeitet wurde (wichtig wegen dem rekursiven Aufruf unten)
+            if (field[i, j].clicked || field[i,j].flagged) //nichts tun wenn das Feld bereits bearbeitet wurde oder  eine Flagge gesetzt wurde (wegen dem rekursiven Aufruf unten)
             {
                 return;
             }
@@ -187,9 +189,17 @@ namespace MinesweeperNiggo
                 }
             }
 
-
+            isWon(); //prüft ob der Zustand "gewonnen" nun besteht
 
         }
+
+
+        //durch erneutes klicken mit der rechten Maustaste kann die Flagge wieder entzogen (bzw neu gesetzt) werden
+        public void setFlag(int i, int j)
+        {
+            field[i, j].flagged = !field[i,j].flagged;
+        }
+
 
 
         //setzt alle Minenfelder auf clicked, im wpf-Fenster werden dann per refresh alle clicked-Felder angezeigt, aber auch alle 
