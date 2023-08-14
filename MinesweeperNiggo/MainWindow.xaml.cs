@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -59,6 +60,20 @@ namespace MinesweeperNiggo
         //In der Loaded-Methode werden die Elemente auf das Fenster Verteilt: Jedes Grid-Feld bekommt einen Button
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //Neustart-button
+            Button btn_restart = new Button();
+            btn_restart.Background = Brushes.DarkGray;
+            btn_restart.BorderBrush = Brushes.Black;
+            btn_restart.BorderThickness = new Thickness(1);
+            btn_restart.Click += newGame;
+            btn_restart.Content = "Neues Spiel";
+            btn_restart.Name = "NeuesSpiel";
+            myGrid.Children.Add(btn_restart);
+            Grid.SetColumn(btn_restart, 4);
+            Grid.SetColumnSpan(btn_restart, 2);
+            Grid.SetRow(btn_restart, 0);
+
+
             for (int i = 1; i <= zeilen;i++)
             {
                 for (int j = 0; j < spalten; j++)
@@ -75,6 +90,12 @@ namespace MinesweeperNiggo
                     Grid.SetColumn(btn, j);
                 }
             }
+        }
+
+        private void newGame(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.Shutdown();
         }
 
 
@@ -135,9 +156,15 @@ namespace MinesweeperNiggo
                     if (item is Button)
                     {
                         Button b = (Button)item;
+                        if (b.Name == "NeuesSpiel") 
+                        { 
+                            continue; 
+                        }
                         b.IsEnabled = false;
                     }
                 }
+
+                
             }
 
 
@@ -194,7 +221,6 @@ namespace MinesweeperNiggo
                 Grid.SetColumn(l, j);
             }
         }
-
 
 
     }//End Main-Window

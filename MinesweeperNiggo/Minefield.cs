@@ -15,6 +15,7 @@ namespace MinesweeperNiggo
         public int numberOfAdjacentMines; //bei Anzahl 0 wird nichts angezeigt
         public bool flagged;
         public bool clicked;
+        //private int AnzahlMinen; --> dieses Attribut wird aktiviert wenn die Anzahl der Minen einstellbar wird
 
 
         //Konstruktor; ein Struct hat immer einen vollständigen Konstruktor. Jede Kachel bekommt aber beim Erstellen trotzdem nur seine STandardwerte
